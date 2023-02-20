@@ -1,0 +1,17 @@
+
+{% extends "base.html" %}
+
+<!-- It will be placed into body of the base.html --> 
+{% block content %}
+  <table id="data" class="table table-bordered table-striped align-middle">
+    {% for raw in table %}
+      <tr>
+        {% for cell in raw %}
+        <td contenteditable="true">
+          {{ cell.content }}
+        </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

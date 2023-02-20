@@ -1,0 +1,45 @@
+# Virtual Environment
+/env
+/venv
+
+# Database files
+*.db
+
+# Compiled python files
+*.pyc
+
+# Cache and log files
+__pycache__/
+*.log
+
+# Flask's cache directory
+instance/
+
+# Flask's logs
+logs/
+
+# Flask's instance folder
+instance/
+
+# SQLite database files
+*.sqlite
+
+# Environment variables
+.env
+
+# Pytest coverage reports
+htmlcov/
+.coverage
+
+# Pytest cache
+.pytest_cache/
+
+# Translations
+*.mo
+
+# PyCharm temporary files
+*.iml
+*.idea
+
+# Mypy cache
+.mypy_cache/
