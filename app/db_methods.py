@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from models import Base, Cell
 
 
@@ -9,9 +10,14 @@ class Database:
         Base.metadata.create_all(self.engine)
 
     def fill_table(self, data: list[Cell]) -> None:
-        with Session(bind=self.engine) as session:
-            session.add_all(data)
-            session.commit()
+
+
+        try:
+            with Session(bind=self.engine) as session:
+                session.add_all(data)
+                session.commit()
+        except IntegrityError as e: #############################ОБЯЗАТЕЛЬНО СДЕЛАТЬ НОРМАЛЬНЫЙ ОТЛОВ ОШИБКИ
+            print("Objects alredy exists...", e)
 
     @staticmethod
     def create_empty_table(rows: int, columns: int) -> list[list[Cell]]:
@@ -28,11 +34,16 @@ class Database:
             y=y,
             content=str(x + y) if x * y == 0 else ''
         ) for x in range(rows + 1)] for y in range(columns + 1)]
-
+        print(cells)
         return cells
 
     def parse_cells(self):  # -> list[list[Cell]]
-        pass
+        cells_table = Base.metadata.tables['cells']
+        with self.engine.connect() as conn:
+            rows = conn.execute(cells_table.select()).fetchall()
+        # Print the rows
+        return(rows)
+
 
 
 if __name__ == "__main__":
@@ -40,3 +51,4 @@ if __name__ == "__main__":
     table = db.create_empty_table(2, 2)
     for raw in table:
         db.fill_table(raw)
+    db.parse_cells()
