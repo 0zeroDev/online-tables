@@ -4,7 +4,7 @@
 <!-- It will be placed into body of the base.html --> 
 {% block content %}
   <table id="data" class="table table-bordered table-striped align-middle">
-    {% for raw in table %}
+    {% for raw in cells %}
       <tr>
         {% for cell in raw %}
         <td contenteditable="true">
