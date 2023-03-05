@@ -1,22 +1,23 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 from models import Base, Cell
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy import create_engine, func
+from sqlalchemy.orm import sessionmaker
 
 
 class Database:
     def __init__(self, engine: str) -> None:
         self.engine = create_engine(engine)
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+
         Base.metadata.create_all(self.engine)
 
-    def fill_table(self, data: list[Cell]) -> None:
-
-
+    def fill_table(self, table: list[list[Cell]]) -> None:
         try:
-            with Session(bind=self.engine) as session:
-                session.add_all(data)
-                session.commit()
-        except IntegrityError as e: #############################ОБЯЗАТЕЛЬНО СДЕЛАТЬ НОРМАЛЬНЫЙ ОТЛОВ ОШИБКИ
+            with self.session.begin() as session:
+                for row in table:
+                    session.add_all(row)
+        except IntegrityError as e:
             print("Objects alredy exists...", e)
 
     @staticmethod
@@ -37,18 +38,33 @@ class Database:
         print(cells)
         return cells
 
-    def parse_cells(self):  # -> list[list[Cell]]
-        cells_table = Base.metadata.tables['cells']
-        with self.engine.connect() as conn:
-            rows = conn.execute(cells_table.select()).fetchall()
-        # Print the rows
-        return(rows)
+    def parse_cells(self) -> list[list[Cell]]:
+        """
+        Returns matrix of cells parsed from cells table.
+        """
+        with self.session.begin() as session:
+            cells: list[Cell] = session.query(Cell).all()
 
+            max_x: int
+            max_y: int
+            max_x, max_y = session.query(
+                func.max(Cell.x),
+                func.max(Cell.y)
+            ).one()
+
+        matrix: list[list[Cell]] = [
+            [None for _ in range(max_y + 1)]
+            for _ in range(max_x + 1)
+        ]
+        for cell in cells:
+            matrix[cell.x][cell.y] = cell
+
+        return matrix
 
 
 if __name__ == "__main__":
     db = Database(engine='sqlite:///online-calc.db')
     table = db.create_empty_table(2, 2)
-    for raw in table:
-        db.fill_table(raw)
-    db.parse_cells()
+    db.fill_table(table)
+    print(db.parse_cells())
+    
