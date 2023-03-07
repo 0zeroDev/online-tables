@@ -28,23 +28,27 @@
     <!-- {% block scripts %}{% endblock %} -->
     <script>
       function updateCell(cell) {
-        var updated_cell = new FormData();
-        updated_cell.append("cell_x", cell.x);
-        updated_cell.append("cell_y", cell.y);
-        updated_cell.append("cell_content", cell.content);
+        var x = cell.getAttribute("x")
+        var y = cell.getAttribute("y")
+        var content = cell.textContent;
+        console.log(x, y)
+        console.log(content)
+        console.log("YA CONSOLE")
 
         $.ajax({
-          method: "POST",
           url: "/update_cell",
-          data: updated_cell,
-          dataType: "json",
-
-          success: function (response) {
-            console.log("Cell updated successfully!");
+          type: "POST",
+          data: {
+            cell_x: x,
+            cell_y: y,
+            cell_content: content
           },
-          error: function (errorMessage) {
-            console.log(JSON.stringify(errorMessage));
+          success: function(response) {
+            console.log(response);
           },
+          error: function(xhr) {
+            console.log(xhr.responseText);
+          }
         });
       }
     </script>
