@@ -16,7 +16,7 @@ class Database:
         try:
             with self.session.begin() as session:
                 for row in table:
-                    session.add_all(row)
+                    self.session.add_all(row)
         except IntegrityError as e:
             print("Objects alredy exists...", e)
 
@@ -43,11 +43,11 @@ class Database:
         Returns matrix of cells parsed from cells table.
         """
         with self.session.begin() as session:
-            cells: list[Cell] = session.query(Cell).all()
+            cells: list[Cell] = self.session.query(Cell).all()
 
             max_x: int
             max_y: int
-            max_x, max_y = session.query(
+            max_x, max_y = self.session.query(
                 func.max(Cell.x),
                 func.max(Cell.y)
             ).one()
