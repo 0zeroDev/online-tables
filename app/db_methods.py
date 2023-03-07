@@ -2,6 +2,7 @@ from models import Base, Cell
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import inspect
 
 
 class Database:
@@ -13,10 +14,15 @@ class Database:
         Base.metadata.create_all(self.engine)
 
     def fill_table(self, table: list[list[Cell]]) -> None:
+        db_status = inspect(self.engine)
+        table_exists: bool = db_status.dialect.has_table(
+            self.engine.connect(), "cells"
+        )
         try:
-            with self.session.begin() as session:
+            if not table_exists:
                 for row in table:
                     self.session.add_all(row)
+                self.session.commit()
         except IntegrityError as e:
             print("Objects alredy exists...", e)
 
@@ -42,15 +48,16 @@ class Database:
         """
         Returns matrix of cells parsed from cells table.
         """
-        with self.session.begin() as session:
-            cells: list[Cell] = self.session.query(Cell).all()
+        cells: list[Cell] = self.session.query(Cell).all()
 
-            max_x: int
-            max_y: int
-            max_x, max_y = self.session.query(
-                func.max(Cell.x),
-                func.max(Cell.y)
-            ).one()
+        max_x: int
+        max_y: int
+        max_x, max_y = self.session.query(
+            func.max(Cell.x),
+            func.max(Cell.y)
+        ).one()
+
+        self.session.commit()
 
         matrix: list[list[Cell]] = [
             [None for _ in range(max_y + 1)]
@@ -67,4 +74,3 @@ if __name__ == "__main__":
     table = db.create_empty_table(2, 2)
     db.fill_table(table)
     print(db.parse_cells())
-    

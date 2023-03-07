@@ -24,6 +24,8 @@ def update_cell():
     y = request.form['cell_y']
     content = request.form['cell_content']
 
+    # TODO(1): add Cell(x, y, content) to cells table and commit session
+
     return f'to_write: x={x}, y={y}, cell_content={content}'
 
 
