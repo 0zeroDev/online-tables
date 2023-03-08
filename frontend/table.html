@@ -3,18 +3,52 @@
 <!DOCTYPE html>
 <!-- It will be placed into body of the base.html --> 
 {% block content %}
-  <table id="data" class="table table-bordered table-striped align-middle">
+  <table id="data" class="table table-bordered align-middle">
     {% for raw in cells %}
       <tr>
         {% for cell in raw %}
-        <td contenteditable="true" x="{{ cell.x }}" y="{{ cell.y }}" content="{{ cell.content }}" oninput="updateCell(this)">{{ cell.content }}</td>
+          {% if cell.x == 0 and cell.y == 0 %}
+            <td style="background-color: gray"></td>
+          {% else %}
+            {% if cell.x * cell.y == 0 %}
+            <td style="background-color: #f8f9fa"><strong>{{ cell.content }}</strong></td>
+            {% else %}
+              <td contenteditable="true" x="{{ cell.x }}" y="{{ cell.y }}" oninput="updateCell(this)">{{ cell.content }}</td>
+            {% endif %}
+          {% endif %}
         {% endfor %}
       </tr>
     {% endfor %}
   </table>
 {% endblock %}
 
-<!-- {% block scripts %}
-  <script src="./update_cell.js"></script>
+{% block scripts %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{{ url_for('static', filename='update_cell.js') }}"></script>
+   <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
 {% endblock %}
- -->
+
+{% block links %}
+  <link
+    rel="shortcut icon"
+    type="image/x-icon"
+    href="{{ url_for('static', filename='diamond_favicon.ico') }}"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('static', filename='styles.css') }}"
+  />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    crossorigin="anonymous"
+  />
+{% endblock %}
+
+

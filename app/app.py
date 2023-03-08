@@ -4,7 +4,13 @@ from flask import render_template
 from flask import request
 from db_methods import Database
 
-app = Flask(__name__, template_folder='../frontend/')
+app = Flask(
+    __name__,
+    template_folder='../frontend/',
+    static_folder='../frontend',
+    static_url_path=''
+)
+
 db = Database(engine='sqlite:///online-calc.db')
 db.fill_table(db.create_empty_table(10, 10))
 
