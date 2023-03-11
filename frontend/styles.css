@@ -1,0 +1,44 @@
+.separator {
+  width: 100%;
+  height: 3px;
+  background-image: linear-gradient(to right, transparent, black, transparent);
+  margin: 20px 0;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.table td,
+.table th {
+  border: 1px solid #ddd;
+}
+
+.table th {
+  text-align: center;
+  font-weight: bold;
+}
+
+.table td {
+  text-align: center;
+  margin: 0px;
+}
+
+.thead-dark {
+  background-color: #343a40;
+  color: #fff;
+}
+
+tr:hover {
+  background-color: unset !important;
+}
+
+.table td:hover {
+  background-color: #f8f9fa;
+}
+.table td:focus {
+  background-color: #f8f9fa;
+}
