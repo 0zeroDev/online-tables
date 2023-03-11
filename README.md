@@ -4,7 +4,12 @@
 
 Является рерайтом https://tomasp.net/blog/2018/write-your-own-excel/
 
-## Стек
+## Стек 
+* Flask
+* SQLAlchemy
+* Bootstrap
+* JQuery(AJAX)
 
-- Python-Flask
-- https://github.com/nativefier/nativefier
+### В перспективе:
+* https://github.com/nativefier/nativefier
+
