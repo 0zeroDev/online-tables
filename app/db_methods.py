@@ -51,8 +51,6 @@ class Database:
         cell.content = content
         self.session.commit()
 
-
-
     @staticmethod
     def create_empty_table(rows: int, columns: int) -> list[list[Cell]]:
         """

@@ -4,6 +4,7 @@ from flask import render_template
 from flask import request
 from db_methods import Database
 from sqlalchemy import inspect
+from arifmetics import calculate_expression
 
 app = Flask(
     __name__,
@@ -16,7 +17,7 @@ db = Database(engine='sqlite:///online-calc.db')
 db_status = inspect(db.engine)
 table_exists: bool = db_status.dialect.has_table(db.engine.connect(), "cells")
 if not table_exists:
-    print("table not exists! creating...")
+    print("Table not exists! creating...")
     db.fill_table(db.create_empty_table(10, 10))
 
 
@@ -31,13 +32,15 @@ def index():
 
 @app.route('/update_cell', methods=['POST'])
 def update_cell():
-    db.update_cell(x := int(request.form['cell_x']),
-                   y := int(request.form['cell_y']),
-                   content := request.form['cell_content'])
+    db.update_cell(
+        x := int(request.form['cell_x']),
+        y := int(request.form['cell_y']),
+        content := request.form['cell_content']
+    )
 
-    # TODO(1): add Cell(x, y, content) to cells table and commit session
-
-    return f'to_write: x={x}, y={y}, cell_content={content}'
+    calculated_content: str = calculate_expression(content)
+    db.update_cell(x, y, calculated_content)
+    return calculated_content
 
 
 if __name__ == "__main__":
