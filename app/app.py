@@ -23,10 +23,19 @@ if not table_exists:
 
 @app.route('/')
 def index():
+    cells_matrix: list[list[Cell]] = db.parse_cells()
+
+# TODO:
+#    Первый вариант - посылать y в формате текста
+#    Второй вариант - конвертировать y в текст на стороне клиента (возможно так будет легче)
+#    x = [[cell.x for cell in row] for row in table],
+#    y = [[chr(cell.y + 64) for cell in row] for row in table],
+#    content = [[cell.content for cell in row] for row in table]
+
     return render_template(
         'table.html',
         title='Online Tables',
-        cells=db.parse_cells()
+        cells=cells_matrix,
     )
 
 
