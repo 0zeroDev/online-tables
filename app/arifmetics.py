@@ -44,15 +44,14 @@ def calculate_expression(expression: str) -> str:
 
     if is_formula(expression):
         try:
-            print(f'to calculate: {filter(expression)}')
-            calculated = eval(filter(expression))
+            calculated = eval(filter(expression.strip()))
         except Exception as error:
             print(f'ERROR while trying to calculate expression.\n|->{error}')
             calculated = expression
     else:
         calculated = expression
 
-    return calculated
+    return str(calculated)
 
 
 def filter(expression: str) -> str:
@@ -65,7 +64,6 @@ def filter(expression: str) -> str:
     operations: str = "-+*/()"
 
     operands: list[str] = re.split(f"([{operations}])", expression)
-    print(operands)
     for operand in operands:
         if operand.isdigit() or operand in operations:
             continue

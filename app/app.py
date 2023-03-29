@@ -4,7 +4,7 @@ from flask import render_template
 from flask import request
 from db_methods import Database
 from sqlalchemy import inspect
-from arifmetics import calculate_expression
+from arifmetics import calculate_expression, is_formula
 
 app = Flask(
     __name__,
@@ -22,15 +22,8 @@ if not table_exists:
 
 
 @app.route('/')
-def index():
+def index() -> str:
     cells_matrix: list[list[Cell]] = db.parse_cells()
-
-# TODO:
-#    Первый вариант - посылать y в формате текста
-#    Второй вариант - конвертировать y в текст на стороне клиента (возможно так будет легче)
-#    x = [[cell.x for cell in row] for row in table],
-#    y = [[chr(cell.y + 64) for cell in row] for row in table],
-#    content = [[cell.content for cell in row] for row in table]
 
     return render_template(
         'table.html',
@@ -40,16 +33,18 @@ def index():
 
 
 @app.route('/update_cell', methods=['POST'])
-def update_cell():
+def update_cell() -> str:
     db.update_cell(
         x := int(request.form['cell_x']),
         y := int(request.form['cell_y']),
-        content := request.form['cell_content']
+        updated_content := str(request.form['cell_content'])
     )
 
-    calculated_content: str = calculate_expression(content)
-    db.update_cell(x, y, calculated_content)
-    return calculated_content
+    if is_formula(updated_content):
+        db.update_cell(x, y, updated_content)
+        return calculate_expression(updated_content)
+
+    return updated_content
 
 
 if __name__ == "__main__":
